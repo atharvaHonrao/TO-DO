@@ -18,21 +18,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _usernameController = new TextEditingController();
   final _passwordController = new TextEditingController();
-
-  signup() async {
-    
-  }
-
-  login() async {}
+  var _passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
-    var _passwordVisible = false;
     return Consumer<UserProvider>(
       builder: (BuildContext context, value, Widget? child) => Scaffold(
           appBar: PreferredSize(
             child: AppbarWidget("Login Page"),
-            preferredSize: const Size.fromHeight(50),
+            preferredSize: const Size.fromHeight(40),
           ),
           body: Column(
             children: [
@@ -56,10 +50,12 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextFormField(
                   controller: _passwordController,
+                  obscureText: !_passwordVisible,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Enter Password",
-                      label: Text("Password"),suffixIcon: IconButton(
+                    border: OutlineInputBorder(),
+                    hintText: "Enter Password",
+                    label: Text("Password"),
+                    suffixIcon: IconButton(
                       icon: Icon(
                         // Based on passwordVisible state choose the icon
                         _passwordVisible
@@ -73,7 +69,8 @@ class _LoginPageState extends State<LoginPage> {
                           _passwordVisible = !_passwordVisible;
                         });
                       },
-                    ),),
+                    ),
+                  ),
                 ),
               ),
               SizedBox(
