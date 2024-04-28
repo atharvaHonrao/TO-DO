@@ -16,7 +16,7 @@ class FirebaseAuthMethods {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       await sendEmail(context);
-      Navigator.pushNamed(context, MyRoutes.loginRoute);
+      Navigator.pushNamed(context, '/');
     } on FirebaseAuthException catch (e) {
       showSnackBar(context, e.message!);
     }
@@ -32,7 +32,7 @@ class FirebaseAuthMethods {
         await sendEmail(context);
         // showSnackBar(context, "Email is not Verified. Email Sent to Verify");
       } else {
-        Navigator.pushNamed(context, MyRoutes.homeRoute);
+        Navigator.pushNamed(context, '/home');
         showSnackBar(context, "Logged in Successfully!!");
 
       }

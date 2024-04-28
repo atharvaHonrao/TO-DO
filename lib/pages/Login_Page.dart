@@ -24,72 +24,86 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(
       builder: (BuildContext context, value, Widget? child) => Scaffold(
-          appBar: PreferredSize(
-            child: AppbarWidget("Login Page"),
-            preferredSize: const Size.fromHeight(40),
-          ),
-          body: Column(
-            children: [
-              SizedBox(
-                height: 40,
+          body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 100,
+            ),
+            const Text(
+              'Login Page', // Display user's name or username here
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 40,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Enter UserName or email id",
-                      label: Text("Username or Email id")),
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: TextFormField(
-                  controller: _passwordController,
-                  obscureText: !_passwordVisible,
-                  decoration: InputDecoration(
+            ),
+            SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: TextFormField(
+                controller: _usernameController,
+                decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: "Enter Password",
-                    label: Text("Password"),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        // Based on passwordVisible state choose the icon
-                        _passwordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: Theme.of(context).primaryColorDark,
-                      ),
-                      onPressed: () {
-                        // Update the state i.e. toogle the state of passwordVisible variable
-                        setState(() {
-                          _passwordVisible = !_passwordVisible;
-                        });
-                      },
+                    hintText: "Enter UserName or email id",
+                    label: Text("Username or Email id")),
+              ),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: TextFormField(
+                controller: _passwordController,
+                obscureText: !_passwordVisible,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Enter Password",
+                  label: Text("Password"),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      // Based on passwordVisible state choose the icon
+                      _passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Theme.of(context).primaryColorDark,
                     ),
+                    onPressed: () {
+                      // Update the state i.e. toogle the state of passwordVisible variable
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
                   ),
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
-              Text(value.email),
-              ElevatedButton(
-                onPressed: () {
-                  // Call updateEmail method to update email value
-                  FirebaseAuthMethods(FirebaseAuth.instance).login(
-                      email: _usernameController.text,
-                      password: _passwordController.text,
-                      context: context);
-                  value.updateUsername(_usernameController.text);
-                },
-                child: Text("Login"),
-              )
-            ],
-          )),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            // Text(value.email),
+            ElevatedButton(
+              onPressed: () {
+                // Call updateEmail method to update email value
+                FirebaseAuthMethods(FirebaseAuth.instance).login(
+                    email: _usernameController.text,
+                    password: _passwordController.text,
+                    context: context);
+                value.updateUsername(_usernameController.text);
+              },
+              child: Text("Login"),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+                onPressed: () => {Navigator.pushNamed(context, '/signup')},
+                child: Text("Go to Sign Up Page"))
+          ],
+        ),
+      )),
     );
   }
 }
