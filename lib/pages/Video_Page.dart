@@ -6,7 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 const appId = "186e397e5bb944fcb9b494b73f0fdf57";
 const token =
-    "007eJxTYEif9+xhnHUy6/rzezedtrzzL1ZS6L3d8nKdz2eXO/349nq6AoOhhVmqsaV5qmlSkqWJSVpykmWSiaVJkrlxmkFaSpqp+eun2mkNgYwMU944sDAyQCCIz86Qm5iSnJiTw8AAAMkfJJ4=";
+    "007eJxTYPjxmb/5l+ixH+Gstd0rNne9vmLZuY9TPvuDwjZlxxWVon0KDIYWZqnGluappklJliYmaclJlkkmliZJ5sZpBmkpaabmB3bopzUEMjIkX3jIxMgAgSA+O0NuYkpyYk4OAwMAIoQiPw==";
 const channel = "madcall";
 
 class VideoPage extends StatefulWidget {
@@ -23,6 +23,7 @@ class _VideoPageState extends State<VideoPage> {
   bool _isCameraOn = true;
   bool _isCameraFront = true;
   bool _isMicrophoneOn = true;
+  bool _isScreenShared = true;
 
   @override
   void initState() {
@@ -107,6 +108,28 @@ class _VideoPageState extends State<VideoPage> {
     _engine.switchCamera();
   }
 
+  void _toggleScreenSharing() async {
+    if (!_isScreenShared) {
+      // Stop screen sharing
+      await _engine.stopScreenCapture();
+      setState(() {
+        _isScreenShared = false;
+      });
+    } else {
+      // Start screen sharing
+      await _engine.startScreenCapture(ScreenCaptureParameters2());
+      ChannelMediaOptions options = ChannelMediaOptions(
+        publishCameraTrack: !_isScreenShared,
+        publishMicrophoneTrack: !_isScreenShared,
+        publishScreenTrack: _isScreenShared,
+        publishScreenCaptureAudio: _isScreenShared,
+        publishScreenCaptureVideo: _isScreenShared,
+      );
+
+      _engine.updateChannelMediaOptions(options);
+    }
+  }
+
   void _toggleMicrophone() {
     setState(() {
       _isMicrophoneOn = !_isMicrophoneOn;
@@ -165,6 +188,12 @@ class _VideoPageState extends State<VideoPage> {
                       : Icons.camera_alt_outlined),
                   onPressed: _toggleCameraFront,
                 ),
+                IconButton(
+                  icon: Icon(_isScreenShared
+                      ? Icons.screen_share
+                      : Icons.cancel_presentation),
+                  onPressed: _toggleScreenSharing,
+                ),
               ],
             ),
           ),
@@ -180,8 +209,8 @@ class _VideoPageState extends State<VideoPage> {
           ? AgoraVideoView(
               controller: VideoViewController.remote(
                 rtcEngine: _engine,
-                canvas: VideoCanvas(uid: _remoteUid),
-                connection: const RtcConnection(channelId: channel),
+                canvas: VideoCanvas(uid: _remoteUid,sourceType: VideoSourceType.videoSourceScreen),
+                connection: const RtcConnection(channelId: channel,),
               ),
             )
           : Text(
