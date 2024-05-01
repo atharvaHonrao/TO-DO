@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  bool isSwitched = true;
-
-  // Method to update email
-  void updateUsername() {
+  var isSwitched = true;
+  void updateTheme() {
     isSwitched = !isSwitched;
-    notifyListeners(); // Notify listeners that the value has changed
+    notifyListeners();
   }
 }

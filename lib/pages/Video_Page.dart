@@ -1,12 +1,11 @@
 import 'dart:async';
-
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 const appId = "186e397e5bb944fcb9b494b73f0fdf57";
 const token =
-    "007eJxTYPjxmb/5l+ixH+Gstd0rNne9vmLZuY9TPvuDwjZlxxWVon0KDIYWZqnGluappklJliYmaclJlkkmliZJ5sZpBmkpaabmB3bopzUEMjIkX3jIxMgAgSA+O0NuYkpyYk4OAwMAIoQiPw==";
+    "007eJxTYIhUutFw7EjFEVGTtu5d5+4aTnQJ237ax43F+F1aN7enwTwFBkMLs1RjS/NU06QkSxOTtOQkyyQTS5Mkc+M0g7SUNFNzmQqjtIZARgbHuAksjAwQCOKzM+QmpiQn5uQwMAAAdCofKA==";
 const channel = "madcall";
 
 class VideoPage extends StatefulWidget {
@@ -32,10 +31,8 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Future<void> initAgora() async {
-    // retrieve permissions
     await [Permission.microphone, Permission.camera].request();
 
-    //create the engine
     _engine = createAgoraRtcEngine();
     await _engine.initialize(const RtcEngineContext(
       appId: appId,
@@ -142,7 +139,7 @@ class _VideoPageState extends State<VideoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agora Video Call'),
+        title: const Text('Video Call'),
       ),
       body: Stack(
         children: [
@@ -209,8 +206,12 @@ class _VideoPageState extends State<VideoPage> {
           ? AgoraVideoView(
               controller: VideoViewController.remote(
                 rtcEngine: _engine,
-                canvas: VideoCanvas(uid: _remoteUid,sourceType: VideoSourceType.videoSourceScreen),
-                connection: const RtcConnection(channelId: channel,),
+                canvas: VideoCanvas(
+                    uid: _remoteUid,
+                    sourceType: VideoSourceType.videoSourceScreen),
+                connection: const RtcConnection(
+                  channelId: channel,
+                ),
               ),
             )
           : Text(

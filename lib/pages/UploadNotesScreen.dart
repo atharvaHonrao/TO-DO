@@ -4,13 +4,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
-// import 'files_list_screen.dart'; // Import the FilesListScreen widget
 
 class UploadNotesScreen extends StatefulWidget {
   final String group;
-
   UploadNotesScreen({required this.group});
-
   @override
   _UploadNotesScreenState createState() => _UploadNotesScreenState();
 }
@@ -20,9 +17,20 @@ class _UploadNotesScreenState extends State<UploadNotesScreen> {
   bool _uploading = false;
 
   @override
-Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Upload Notes - ${widget.group}')),
+      appBar: AppBar(
+        title: Text('${widget.group}'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.video_call), // Add the video call icon
+            onPressed: () {
+              // Add functionality for the video call button here
+              Navigator.pushNamed(context, '/video');
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -38,7 +46,17 @@ Widget build(BuildContext context) {
               onPressed: () {
                 _pickFile();
               },
-              child: Text('Select File', style: TextStyle(fontSize: 16)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.attach_file),
+                  SizedBox(width: 8),
+                  Text(
+                    'Select File',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 12),
               ),
@@ -46,9 +64,19 @@ Widget build(BuildContext context) {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _uploading ? null : () => _uploadFile(),
-              child: _uploading
-                  ? CircularProgressIndicator()
-                  : Text('Upload File', style: TextStyle(fontSize: 16)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.cloud_upload),
+                  SizedBox(width: 8),
+                  _uploading
+                      ? CircularProgressIndicator()
+                      : Text(
+                          'Upload File',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                ],
+              ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 12),
               ),
@@ -63,7 +91,17 @@ Widget build(BuildContext context) {
                   ),
                 );
               },
-              child: Text('View Uploaded Files', style: TextStyle(fontSize: 16)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.folder_open),
+                  SizedBox(width: 8),
+                  Text(
+                    'View Uploaded Files',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 12),
               ),
@@ -96,16 +134,13 @@ Widget build(BuildContext context) {
         File file = _selectedFile!;
         String fileName = file.path.split('/').last;
 
-        // Upload file to Firebase Storage
         Reference storageRef = FirebaseStorage.instance
             .ref()
             .child('notes/${widget.group}/$fileName');
         await storageRef.putFile(file);
 
-        // Get download URL from storage
         String fileUrl = await storageRef.getDownloadURL();
 
-        // Save file details to Firestore
         await FirebaseFirestore.instance.collection('notes').add({
           'group': widget.group,
           'fileName': fileName,
@@ -179,7 +214,7 @@ class _FilesListScreenState extends State<FilesListScreen> {
                   child: ListTile(
                     title: Text(fileData['fileName']),
                     trailing: IconButton(
-                      icon: Icon(Icons.download), // Download icon
+                      icon: Icon(Icons.download),
                       onPressed: () {
                         _launchURL(fileData['fileUrl']);
                       },
@@ -194,11 +229,7 @@ class _FilesListScreenState extends State<FilesListScreen> {
     );
   }
 
-  // Function to launch URL in default browser
   void _launchURL(String url) async {
-    // Encode the URL string to handle special characters
-    // String encodedUrl = Uri.encodeFull(url);
-
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -226,7 +257,6 @@ class _FilesListScreenState extends State<FilesListScreen> {
         filesList.add(fileData);
       } else {
         print('Document does not contain fileName field: ${doc.id}');
-        // Handle the case where the fileName field is missing if needed
       }
     });
 
